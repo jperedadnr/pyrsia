@@ -70,8 +70,8 @@ jobs:
       # Install sccache from binary
       - run: |
           .github/workflows/sccache-windows.sh
-          sccache --start-server
-          sccache --show-stats
+          /Users/runner/.cargo/bin/sccache --start-server
+          /Users/runner/.cargo/bin/sccache --show-stats
 
       # Need to add build number to version number
       - name: Add Build to Version Number
