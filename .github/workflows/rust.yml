@@ -2,7 +2,7 @@ name: Rust
 
 on:
   push:
-    branches: [ main ]
+    branches: [ * ] # todo: restore to main
   pull_request:
     paths: # Make sure to keep sync'd https://github.com/pyrsia/pyrsia/blob/main/.github/workflows/rust-lint-skipped.yml#L8
       - .github/workflows/rust.yml
@@ -50,6 +50,37 @@ jobs:
     - name: Execute Test Cases
       run: |
         cargo test --workspace --verbose --release
+
+  # OS/X  Build Job
+  build-windows:
+    runs-on: windows-latest
+    env:
+      RUSTC_WRAPPER: /Users/runner/.cargo/bin/sccache
+      CARGO_INCREMENTAL: 0
+    steps:
+      - uses: actions/checkout@v3
+
+      # Use sscache store in GitHub cache
+      - uses: actions/cache@v3
+        with:
+          path: /Users/runner/Library/Caches/Mozilla.sccache
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      # Install sccache from binary
+      - run: |
+          .github/workflows/sccache-windows.sh
+          sccache --start-server
+          sccache --show-stats
+
+      # Need to add build number to version number
+      - name: Add Build to Version Number
+        run: |
+          sed -i.bak "/^version = \"0.1.0\"/s/\"\$/+${{ github.run_number }}\"/" Cargo.toml
+
+      - name: Build Release and Test Binaries
+        run: |
+          .github/workflows/build.sh
+          sccache --show-stats
 
   build-push-linux:
     permissions:
