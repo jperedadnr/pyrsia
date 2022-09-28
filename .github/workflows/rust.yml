@@ -2,7 +2,7 @@ name: Rust
 
 on:
   push:
-    branches: [ 1011-windowmsi ] # todo: restore to main
+    branches: [ 1011-windowsmsi ] # todo: restore to main
   pull_request:
     paths: # Make sure to keep sync'd https://github.com/pyrsia/pyrsia/blob/main/.github/workflows/rust-lint-skipped.yml#L8
       - .github/workflows/rust.yml
