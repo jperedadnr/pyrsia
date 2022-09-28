@@ -69,8 +69,8 @@ jobs:
 
       # Install sccache from binary
       - run: |
-          set %PATH%=/Users/runner/.cargo/bin/;%PATH%
           .github/workflows/sccache-windows.sh
+          Add-Content $env:GITHUB_PATH /Users/runner/.cargo/bin
           sccache --start-server
           sccache --show-stats
 
