@@ -69,12 +69,12 @@ jobs:
 
       # Install sccache from binary
       - name: Install sccache
-      - run: |
+        run: |
           .github/workflows/sccache-windows.sh
 
       # Start sccache
       - name: Start sccache
-      - run: |
+        run: |
           sccache --start-server
           sccache --show-stats
 
