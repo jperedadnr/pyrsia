@@ -87,7 +87,6 @@ jobs:
 
       # Create installer
       - name: Create MSI
-        id: outputfile
         shell: bash
         # todo: uncomment: if: github.repository_owner == 'pyrsia' && (github.event_name == 'push' || github.event_name == 'release')
         env:
@@ -98,13 +97,12 @@ jobs:
           "$WIX_PATH_CANDLE" -ext WixUIExtension -ext WixUtilExtension installerps1.wxs
           "$WIX_PATH_LIGHT" -ext WixUIExtension -ext WixUtilExtension installerps1.wixobj -out pyrsia.msi
           cd ../..
-          echo ::set-output name=path::installers\windows\pyrsia.msi
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: windows-installer
-          path: ${{ steps.outputfile.outputs.path }}
+          path: ${{ github.workspace }}/installers/windows/pyrsia.msi
 
   build-push-linux:
     if: ${{ false }} # todo: remove this line
