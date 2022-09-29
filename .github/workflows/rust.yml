@@ -68,10 +68,15 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       # Install sccache from binary
+      - name: Install sccache
       - run: |
           .github/workflows/sccache-windows.sh
-          C:\Users\runneradmin\.cargo\bin\sccache.exe --start-server
-          C:\Users\runneradmin\.cargo\bin\sccache.exe --show-stats
+
+      # Start sccache
+      - name: Start sccache
+      - run: |
+          sccache --start-server
+          sccache --show-stats
 
       # Need to add build number to version number
       - name: Add Build to Version Number
