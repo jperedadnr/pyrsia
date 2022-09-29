@@ -2,7 +2,7 @@ name: Rust
 
 on:
   push:
-    branches: [ 1011-windowsmsi ] # todo: restore to main
+    branches: [ main ]
   pull_request:
     paths: # Make sure to keep sync'd https://github.com/pyrsia/pyrsia/blob/main/.github/workflows/rust-lint-skipped.yml#L8
       - .github/workflows/rust.yml
@@ -18,7 +18,6 @@ env:
 jobs:
   # OS/X  Build Job
   build-osx:
-    if: ${{ false }} # todo: remove this line
     runs-on: macos-latest
     env:
       RUSTC_WRAPPER: /Users/runner/.cargo/bin/sccache
@@ -107,7 +106,6 @@ jobs:
           path: ${{ github.workspace }}/installers/windows/pyrsia.msi
 
   build-push-linux:
-    if: ${{ false }} # todo: remove this line
     permissions:
       contents: 'read'
       id-token: 'write'
@@ -220,7 +218,6 @@ jobs:
 
   # Coverage wipes the cache in order to instrument the code.  No need to wait for other jobs to run it.
   coverage:
-    if: ${{ false }} # todo: remove this line
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -248,7 +245,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     needs: [build-push-linux]
-    if: ${{ false }} # todo: restore to: github.repository_owner == 'pyrsia' && github.event_name == 'push'
+    if: github.repository_owner == 'pyrsia' && github.event_name == 'push'
     steps:
     - uses: actions/checkout@v3
       with:
