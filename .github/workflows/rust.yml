@@ -56,7 +56,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      RUSTC_WRAPPER: /Users/runner/.cargo/bin/sccache
+      RUSTC_WRAPPER: C:\Users\runneradmin\.cargo\bin\sccache.exe
       CARGO_INCREMENTAL: 0
     steps:
       - uses: actions/checkout@v3
@@ -64,13 +64,12 @@ jobs:
       # Use sscache store in GitHub cache
       - uses: actions/cache@v3
         with:
-          path: /Users/runner/Library/Caches/Mozilla.sccache
+          path: c:/Users/runneradmin/.cargo/sscache
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       # Install sccache from binary
       - run: |
           .github/workflows/sccache-windows.sh
-          Add-Content $env:GITHUB_PATH /Users/runner/.cargo/bin
           sccache --start-server
           sccache --show-stats
 
