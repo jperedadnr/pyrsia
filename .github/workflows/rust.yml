@@ -71,6 +71,7 @@ jobs:
       - name: Install sccache
         run: |
           .github/workflows/sccache-windows.sh
+          ls -l C:\Users\runneradmin\.cargo\bin
 
       # Start sccache
       - name: Start sccache
