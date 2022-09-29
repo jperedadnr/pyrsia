@@ -76,6 +76,7 @@ jobs:
 
       # Need to add build number to version number
       - name: Add Build to Version Number
+        shell: cmd
         run: |
           "C:\Program Files\Git\usr\bin\sed.exe" -i "s/version = \"0.1.0\"/version = \"0.1.0+${{ github.run_number }}\"/" Cargo.toml
 
