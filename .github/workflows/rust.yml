@@ -87,6 +87,7 @@ jobs:
 
       # Create installer
       - name: Create MSI
+        shell: bash
         # todo: uncomment: if: github.repository_owner == 'pyrsia' && (github.event_name == 'push' || github.event_name == 'release')
         env:
           WIX_PATH_CANDLE: "C:/Program Files (x86)/WiX Toolset v3.11/bin/candle.exe"
