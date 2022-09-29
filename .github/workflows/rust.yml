@@ -64,25 +64,20 @@ jobs:
       # Use sscache store in GitHub cache
       - uses: actions/cache@v3
         with:
-          path: c:/Users/runneradmin/.cargo/sscache
+          path: C:/Users/runneradmin/AppData/Local/Mozilla/sccache/cache
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      # Install sccache from binary
-      - name: Install sccache
-        run: |
-          .github/workflows/sccache-windows.bat
-          ls -l C:\Users\runneradmin\.cargo\bin
-
-      # Start sccache
+      # Install and start sccache from binary
       - name: Start sccache
         run: |
+          .github/workflows/sccache-windows.bat
           sccache --start-server
           sccache --show-stats
 
       # Need to add build number to version number
       - name: Add Build to Version Number
         run: |
-          sed -i.bak "/^version = \"0.1.0\"/s/\"\$/+${{ github.run_number }}\"/" Cargo.toml
+          "C:\Program Files\Git\usr\bin\sed.exe" -i.bak "/^version = \"0.1.0\"/s/\"\$/+${{ github.run_number }}\"/" Cargo.toml
 
       - name: Build Release and Test Binaries
         run: |
