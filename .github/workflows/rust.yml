@@ -82,8 +82,14 @@ jobs:
 
       - name: Build Release and Test Binaries
         run: |
-          .github/workflows/build.sh
+          cargo build --workspace --lib --bins --verbose --release
           sccache --show-stats
+
+      # Strip binaries
+      - name: Strip Binaries
+        if: github.repository_owner == 'pyrsia' && (github.event_name == 'push' || github.event_name == 'release')
+        run: |
+          cargo strip
 
   build-push-linux:
     if: ${{ false }} # todo: remove this line
