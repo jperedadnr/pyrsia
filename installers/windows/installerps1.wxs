@@ -18,17 +18,22 @@
                     <Component Id='ReadmeComponent' Guid='{925B98D8-4C2B-44AA-A249-18992A46A021}' Win64="yes">
                         <File Id="Readme" Name="Readme.txt" DiskId="1" Source="Readme.txt"/>
                     </Component>
-                    <Component Id='CLIComponent' Guid='{925B98D8-4C2B-44AA-A249-18992A46A022}' Win64="yes">
-                        <File Id="pyrsia" Name="pyrsia.exe" DiskId="1" Source="..\..\target\release\pyrsia.exe"/>
-                    </Component>
+                    <Directory Id='BINDIR' Name='bin'>
+                        <Component Id='PathComponent' Guid='925B98D8-4C2B-44AA-A249-18992A46A022' KeyPath='yes'>
+                            <Environment Id='PATH' Name='PATH' Value='[BINDIR]' Permanent='no' Part='last' Action='set' System='yes'/>
+                        </Component>
+                        <Component Id='CLIComponent' Guid='{925B98D8-4C2B-44AA-A249-18992A46A023}' Win64="yes">
+                            <File Id="pyrsia" Name="pyrsia.exe" DiskId="1" Source="..\..\target\release\pyrsia.exe"/>
+                        </Component>
+                    </Directory>
                     <Directory Id='SERVICEDIR' Name='service'>
-                        <Component Id='PrePS1Component' Guid='{925B98D8-4C2B-44AA-A249-18992A46A023}' Win64="yes">
+                        <Component Id='PrePS1Component' Guid='{925B98D8-4C2B-44AA-A249-18992A46A024}' Win64="yes">
                             <File Id="nssmInstaller" Name="InstallNSSM.ps1" DiskId="1" Source="InstallNSSM.ps1"/>
                         </Component>
-                        <Component Id='PS1Component' Guid='{925B98D8-4C2B-44AA-A249-18992A46A024}' Win64="yes">
+                        <Component Id='PS1Component' Guid='{925B98D8-4C2B-44AA-A249-18992A46A025}' Win64="yes">
                             <File Id="pyrsiaNodeInstaller" Name="InstallPyrsiaNodeAsWindowsService.ps1" DiskId="1" Source="InstallPyrsiaNodeAsWindowsService.ps1"/>
                         </Component>
-                        <Component Id='ServiceComponent' Guid='{925B98D8-4C2B-44AA-A249-18992A46A025}' Win64="yes">
+                        <Component Id='ServiceComponent' Guid='{925B98D8-4C2B-44AA-A249-18992A46A026}' Win64="yes">
                             <File Id="pyrsia_node" Name="pyrsia_node.exe" DiskId="1" Source="..\..\target\release\pyrsia_node.exe"/>
                         </Component>
                     </Directory>
@@ -43,6 +48,9 @@
        	<ComponentRef Id='PrePS1Component'/>
        	<ComponentRef Id='PS1Component'/>
        	<ComponentRef Id='ServiceComponent'/>
+       	<Feature Id='Environment' Title='PATH Environment Variable' Description='Add the install location of the [ProductName] executable to the PATH system environment variable. This allows the [ProductName] executable to be called from any location.' Level='1' Absent='allow'>
+       	    <ComponentRef Id='PathComponent'/>
+       	</Feature>
   	</Feature>
 
     <SetProperty Id="InstallNSSM"
@@ -58,10 +66,13 @@
             Value="&quot;[POWERSHELLEXE]&quot; -NonInteractive -ExecutionPolicy Bypass -InputFormat None -NoProfile -File &quot;[SERVICEDIR]InstallPyrsiaNodeAsWindowsService.ps1&quot;" />
 
     <CustomAction Id="RunStartScript" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no" />
+
     <InstallExecuteSequence>
           <Custom Action="InstallNSSM" Before="InstallFinalize"><![CDATA[NOT Installed]]></Custom>
           <Custom Action="RunStartScript" Before="InstallFinalize"><![CDATA[NOT Installed]]></Custom>
     </InstallExecuteSequence>
 
+    <Property Id='ARPHELPLINK' Value='https://github.com/pyrsia/pyrsia'/>
+
     </Product>
-  </Wix>
+</Wix>

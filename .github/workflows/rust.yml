@@ -52,7 +52,7 @@ jobs:
       run: |
         cargo test --workspace --verbose --release
 
-  # OS/X  Build Job
+  # Windows Build Job
   build-windows:
     runs-on: windows-latest
     env:
@@ -80,7 +80,8 @@ jobs:
         run: |
           "C:\Program Files\Git\usr\bin\sed.exe" -i "s/version = \"0.1.0\"/version = \"0.1.0+${{ github.run_number }}\"/" Cargo.toml
 
-      - name: Build Release and Test Binaries
+      # build binaries. Todo: include tests
+      - name: Build Release Binaries
         run: |
           cargo build --workspace --lib --bins --verbose --release
           sccache --show-stats
@@ -98,6 +99,7 @@ jobs:
           "$WIX_PATH_LIGHT" -ext WixUIExtension -ext WixUtilExtension installerps1.wixobj -out pyrsia.msi
           cd ../..
 
+      # for now, upload installer
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:

@@ -1,4 +1,18 @@
-﻿Function Install-Service {
+﻿#   Copyright 2021 JFrog Ltd
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+Function Install-Service {
      param(
         [Parameter(Mandatory=$true)][string]$serviceName ,
         [Parameter(Mandatory=$true)][string]$serviceExecutable ,
@@ -13,14 +27,16 @@
     $env:PATH = "${env:PATH};" + [System.Environment]::GetEnvironmentVariable('PATH','user')
     $testNSSM = (Get-Command nssm -ErrorAction SilentlyContinue).Path
     if ($testNSSM -eq $null) {
-        Write-Host Error nssm not found -foreground "red"
+        # Error: this shouldn't happen
+        Write-Host Error: nssm not found -foreground "red"
         exit 1
     }
+    # directory where nssm should be already installed
     $NSSMPath = (Get-Item (Get-Command nssm).Path).DirectoryName
 
     Write-Host Installing service $serviceName -foreground "green"
     Write-Host "NSSM path:" $NSSMPath
-    Write-Host "Servicename:" $serviceName
+    Write-Host "Service name:" $serviceName
     Write-Host "Service executable:" $serviceExecutable
     Write-Host "Service executable args:" $serviceExecutableArgs
     Write-Host "Service app directory:" $serviceAppDirectory
@@ -32,74 +48,77 @@
     push-location
     Set-Location $NSSMPath
 
+    # Check for an existing service
     $service = Get-Service $serviceName -ErrorAction SilentlyContinue
-
-    if($service)
+    if ($service)
     {
+        # stop and remove previous service
         Write-host service $service.Name is $service.Status
         Write-Host Removing $serviceName service
         &.\nssm.exe stop $serviceName
         &.\nssm.exe remove $serviceName confirm
     }
 
+    # install service
     Write-Host Installing $serviceName as a service
     &.\nssm.exe install $serviceName $serviceExecutable $serviceExecutableArgs
 
-    # setting app directory
-    if($serviceAppDirectory)
+    # set app directory
+    if ($serviceAppDirectory)
     {
         Write-host setting app directory to $serviceAppDirectory -foreground "green"
         &.\nssm.exe set $serviceName AppDirectory $serviceAppDirectory
     }
 
-    # setting app description
-    if($serviceDescription)
+    # set app description
+    if ($serviceDescription)
     {
-        Write-host setting app directory to $serviceDescription -foreground "green"
+        Write-host setting app description to $serviceDescription -foreground "green"
         &.\nssm.exe set $serviceName DESCRIPTION $serviceDescription
     }
 
-    # setting app env
-    if($serviceAppEnvironmentExtra)
+    # setting environment variables
+    if ($serviceAppEnvironmentExtra)
     {
         Write-host setting app env to $serviceAppEnvironmentExtra -foreground "green"
         &.\nssm.exe set $serviceName AppEnvironmentExtra $serviceAppEnvironmentExtra
     }
 
-    # setting app logs
-    if($serviceAppStdout)
+    # set app stdout logs
+    if ($serviceAppStdout)
     {
-        Write-host setting app logs to $serviceAppStdout -foreground "green"
+        Write-host setting app stdout logs to $serviceAppStdout -foreground "green"
         &.\nssm.exe set $serviceName AppStdout $serviceAppStdout
     }
 
-    # setting app logs
-    if($serviceAppStderr)
+    # set app stderr logs
+    if ($serviceAppStderr)
     {
-        Write-host setting app logs to $serviceAppStderr -foreground "green"
+        Write-host setting app stderr logs to $serviceAppStderr -foreground "green"
         &.\nssm.exe set $serviceName AppStderr $serviceAppStderr
     }
 
-    #start service right away
+    # start service
     &.\nssm.exe start $serviceName
     pop-location
 }
 
+# store current location, and cd into ps script root
 $prevPwd = $PWD
 Set-Location -ErrorAction Stop -LiteralPath $PSScriptRoot
 
 try {
-    $Servicename = "PyrsiaService"
-    $ServiceDisplayName = "PyrsiaService"
-    $Description = "Pyrsia Service"
+    $ServiceName = "PyrsiaService"
     $BinaryPath = "${PWD}\pyrsia_node.exe"
-    $StartupType = "auto"
     $serviceAppDirectory = $PWD
+    $Description = "Pyrsia: the distributed package manager service"
     $serviceAppEnvironmentExtra = "RUST_LOG=pyrsia=debug", "DEV_MODE=on"
     $serviceAppStdout = "${PWD}\pyrsia_logs.txt"
     $serviceAppStderr = "${PWD}\pyrsia_logs.txt"
 
-    Install-Service -serviceName $Servicename -serviceExecutable $BinaryPath -serviceAppDirectory $serviceAppDirectory -serviceDescription $Description -serviceAppEnvironmentExtra $serviceAppEnvironmentExtra -serviceAppStdout $serviceAppStdout -serviceAppStderr $serviceAppStderr
+    # Call function to create and install the service
+    Install-Service -ServiceName $ServiceName -serviceExecutable $BinaryPath -serviceAppDirectory $serviceAppDirectory -serviceDescription $Description -serviceAppEnvironmentExtra $serviceAppEnvironmentExtra -serviceAppStdout $serviceAppStdout -serviceAppStderr $serviceAppStderr
 } finally {
+    # restore initial location
     $prevPwd | Set-Location
 }
