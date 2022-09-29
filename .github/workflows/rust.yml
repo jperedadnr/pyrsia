@@ -70,7 +70,7 @@ jobs:
       # Install sccache from binary
       - name: Install sccache
         run: |
-          .github/workflows/sccache-windows.sh
+          .github/workflows/sccache-windows.bat
           ls -l C:\Users\runneradmin\.cargo\bin
 
       # Start sccache
