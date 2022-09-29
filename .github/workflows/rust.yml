@@ -85,11 +85,14 @@ jobs:
           cargo build --workspace --lib --bins --verbose --release
           sccache --show-stats
 
-      # Strip binaries
-      - name: Strip Binaries
-        if: github.repository_owner == 'pyrsia' && (github.event_name == 'push' || github.event_name == 'release')
+      # Create installer
+      - name: Create MSI
+        # todo: uncomment: if: github.repository_owner == 'pyrsia' && (github.event_name == 'push' || github.event_name == 'release')
         run: |
-          cargo strip
+          cd installers/windows
+          candle -ext WixUIExtension -ext WixUtilExtension installerps1.wxs
+          light -ext WixUIExtension -ext WixUtilExtension installerps1.wixobj -out pyrsia.msi
+          cd ../..
 
   build-push-linux:
     if: ${{ false }} # todo: remove this line

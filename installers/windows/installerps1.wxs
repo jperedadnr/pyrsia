@@ -19,7 +19,7 @@
                         <File Id="Readme" Name="Readme.txt" DiskId="1" Source="Readme.txt"/>
                     </Component>
                     <Component Id='CLIComponent' Guid='{925B98D8-4C2B-44AA-A249-18992A46A022}' Win64="yes">
-                        <File Id="pyrsia" Name="pyrsia.exe" DiskId="1" Source="pyrsia.exe"/>
+                        <File Id="pyrsia" Name="pyrsia.exe" DiskId="1" Source="..\..\target\release\pyrsia.exe"/>
                     </Component>
                     <Directory Id='SERVICEDIR' Name='service'>
                         <Component Id='PrePS1Component' Guid='{925B98D8-4C2B-44AA-A249-18992A46A023}' Win64="yes">
@@ -29,7 +29,7 @@
                             <File Id="pyrsiaNodeInstaller" Name="InstallPyrsiaNodeAsWindowsService.ps1" DiskId="1" Source="InstallPyrsiaNodeAsWindowsService.ps1"/>
                         </Component>
                         <Component Id='ServiceComponent' Guid='{925B98D8-4C2B-44AA-A249-18992A46A025}' Win64="yes">
-                            <File Id="pyrsia_node" Name="pyrsia_node.exe" DiskId="1" Source="pyrsia_node.exe"/>
+                            <File Id="pyrsia_node" Name="pyrsia_node.exe" DiskId="1" Source="..\..\target\release\pyrsia_node.exe"/>
                         </Component>
                     </Directory>
                 </Directory>
